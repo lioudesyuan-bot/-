@@ -1,4 +1,4 @@
-name: 每週二自動娛樂城爬蟲排程
+name: 每週二自動金流爬蟲排程
 
 on:
   schedule:
@@ -29,8 +29,8 @@ jobs:
     - name: 4. 安裝 Python 必備爬蟲套件
       run: |
         python -m pip install --upgrade pip
-        # 💡 這裡已經幫你補上 gspread 與 oauth2client 套件
-        pip install selenium webdriver-manager requests gspread oauth2client
+        # 💡 這裡已經幫你把 selenium、requests、gspread、oauth2client、openpyxl 全都補齊了！
+        pip install selenium webdriver-manager requests gspread oauth2client openpyxl
 
     - name: 5. 執行 Python 爬蟲並同步至雲端試算表
       run: |
