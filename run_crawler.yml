@@ -1,1 +1,36 @@
+name: 每週四自動娛樂城爬蟲排程
 
+on:
+  schedule:
+    # ⚠️ 注意：GitHub Actions 使用的是國際標準時 (UTC)
+    # 台灣時間 (GMT+8) 下午 16:00 = UTC 時間 早上 08:00
+    # 格式：分 時 日 月 星期
+    - cron: '0 8 * * 2'
+  workflow_dispatch: # 保留這個按鈕，讓你可以隨時手動點擊測試執行
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest # 使用最新的 Linux 環境
+
+    steps:
+    - name: 1. 複製專案程式碼
+      uses: actions/checkout@v4
+
+    - name: 2. 初始化 Python 環境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: 3. 安裝 Linux 系統底層的 Chrome 瀏覽器
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: 4. 安裝 Python 必備爬蟲套件
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager requests
+
+    - name: 5. 執行 Python 爬蟲並同步至雲端試算表
+      run: |
+        python LeaderBoard26-5-19.py
