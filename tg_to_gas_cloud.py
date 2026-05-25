@@ -1,7 +1,7 @@
 import os
 import requests
 
-# 🔐 從 GitHub Secrets 安全讀取環境變數
+# 🔐 從 GitHub Secrets 安全讀取環境變變數
 BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
 GAS_WEBAPP_URL = os.environ.get("GAS_WEBAPP_URL")
 
@@ -25,7 +25,7 @@ def main():
         print(f"❌ Telegram API 回傳錯誤: {res_data}")
         return
 
-    # 2. 從後往前翻，尋找最新的一張 CSV 檔案
+    # 2. 从後往前翻，尋找最新且符合特定檔名的金好運 CSV 檔案
     updates = res_data.get("result", [])
     csv_file_id = None
     csv_file_name = None
@@ -35,16 +35,18 @@ def main():
         if message and "document" in message:
             doc = message["document"]
             filename = doc.get("file_name", "")
-            if filename.lower().endswith('.csv'):
+            
+            # 🎯【核心修正】：必須是 CSV 檔，且檔名內必須包含指定的關鍵字
+            if filename.lower().endswith('.csv') and "_assetranking_top100_tw" in filename.lower():
                 csv_file_id = doc.get("file_id")
                 csv_file_name = filename
-                break  # 找到最新的一張就收工
+                break  # 精準鎖定最新的那張金好運，直接跳出迴圈
 
     if not csv_file_id:
-        print("⚠️ 提示：最近的 Telegram 紀錄中沒有發現任何 CSV 檔案。")
+        print("⚠️ 提示：最近的 Telegram 紀錄中沒有發現符合 '_AssetRanking_TOP100_TW' 的金好運 CSV 檔案。")
         return
 
-    print(f"🎯 成功鎖定最新 CSV 檔案: {csv_file_name}")
+    print(f"🎯 成功精準鎖定金好運 CSV 檔案: {csv_file_name}")
 
     # 3. 取得該檔案的雲端下載路徑
     get_file_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getFile?file_id={csv_file_id}"
