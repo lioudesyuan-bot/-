@@ -2,8 +2,8 @@ import os
 import requests
 
 # 🔐 從 GitHub Secrets 安全讀取環境變數
-BOT_TOKEN = os.environ.get("8730203943:AAEwahPleVLjoQWj2EXZVjr6ISYpoh5ib7U")
-GAS_WEBAPP_URL = os.environ.get("https://script.google.com/macros/s/AKfycbyDrkoCtx8hFBg43NnStpX1hJ6Sr9ZECFxRlOrTBTfjrXINZKBOOKEs7eGu-uXklMnV/exec")
+BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
+GAS_WEBAPP_URL = os.environ.get("GAS_WEBAPP_URL")
 
 def main():
     if not BOT_TOKEN or not GAS_WEBAPP_URL:
