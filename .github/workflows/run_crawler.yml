@@ -2,7 +2,7 @@ name: 每週二自動金流爬蟲排程
 
 on:
   schedule:
-    - cron: '0 8 * * 2'
+    - cron: '0 10 * * 3'
   workflow_dispatch:
 
 env:
