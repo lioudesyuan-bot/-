@@ -176,7 +176,7 @@ except:
 print("\n------------ 正在透過 GAS 傳送資料至 Google 試算表 ------------")
 
 # 1. 這裡貼上你剛剛在 Google 部署得到的網頁應用程式網址
-GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzDOEU8LANFA0RRk4UXjgJzqw9xgevBWC2fq9gWSLaER5fOSAenvaq5m-rOb4Bl3eG9/exec" 
+GAS_WEBAPP_URL = os.environ.get("GAS_WEBAPP_URL")
 
 # 2. 把所有抓到的陣列打包成一個大字典
 payload = {
