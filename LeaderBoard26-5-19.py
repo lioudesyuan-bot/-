@@ -173,27 +173,65 @@ except:
     pass
 
 
-# 到了原本的寫檔階段，改成這樣寫：
-print("\n------------ 正在透過 GAS 傳送資料至 Google 試算表 ------------")
+# ====================================================================
+# 🎯【全新升級】：健全性檢查與強效防呆打包傳送
+# ====================================================================
+print("\n------------ 正在優化並檢查資料結構 ------------")
 
-# 1. 這裡貼上你剛剛在 Google 部署得到的網頁應用程式網址
 GAS_WEBAPP_URL = os.environ.get("GAS_WEBAPP_URL")
 
-# 2. 把所有抓到的陣列打包成一個大字典
+if not GAS_WEBAPP_URL:
+    print("❌ 錯誤：環境變數中找不到 GAS_WEBAPP_URL，無法傳送！")
+    sys.exit()
+
+# 輔助清理與對齊函數：確保轉成數字、防範 NaN、強迫對齊 100 筆長度
+def sanitize_and_pad(raw_values, expected_length=100):
+    clean_list = []
+    for val in raw_values:
+        try:
+            # 移除可能殘留的逗號或空白，轉換為浮點數或整數
+            if isinstance(val, str):
+                val = val.replace(",", "").strip()
+            num = float(val) if val else 0.0
+            clean_list.append(num)
+        except Exception:
+            clean_list.append(0.0)
+            
+    # 如果撈到的數量不夠，自動在後面補 0 直到滿 100 筆（徹底根除 GAS 端因長度不足爆掉的問題）
+    while len(clean_list) < expected_length:
+        clean_list.append(0.0)
+        
+    # 截斷多餘的，確保剛好 100 筆
+    return clean_list[:expected_length]
+
+# 智慧清理三大娛樂城的數值陣列
+clean_n1_value = sanitize_and_pad(n1_Value)
+clean_n2_value = sanitize_and_pad(n2_Value)
+clean_n3_value = sanitize_and_pad(n3_Value)
+
+# 打包安全無毒的大字典
 payload = {
-    "n1_Name": n1_Name,
-    "n1_Value": n1_Value,
-    "n2_Name": n2_Name,
-    "n2_Value": n2_Value,
-    "n3_Name": n3_Name,
-    "n3_Value": n3_Value
+    "n1_Name": n1_Name[:100] if n1_Name else ["無"]*100,
+    "n1_Value": clean_n1_value,
+    "n2_Name": n2_Name[:100] if n2_Name else ["無"]*100,
+    "n2_Value": clean_n2_value,
+    "n3_Name": n3_Name[:100] if n3_Name else ["無"]*100,
+    "n3_Value": clean_n3_value
 }
 
+print(f"📊 檢查完畢！老子有錢: {len(payload['n1_Value'])}筆, 包你發: {len(payload['n2_Value'])}筆, 滿貫大亨: {len(payload['n3_Value'])}筆")
+print("🚀 正在透過 GAS 安全傳送資料至 Google 試算表...")
+
 try:
-    # 3. 直接發送 POST 請求給 Google Sheet，免金鑰、免驗證！
-    response = requests.post(GAS_WEBAPP_URL, json=payload, timeout=30)
-    print("Google 試算表回應：", response.text)
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    # 加上 timeout 防止 GitHub Actions 遇到 Google 伺服器抽風時無限卡死
+    response = requests.post(GAS_WEBAPP_URL, data=json.dumps(payload), headers=headers, timeout=45)
+    
+    print("================================================")
+    print("🎉 Google 試算表雲端回應：")
+    print(response.text)
+    print("================================================")
 except Exception as e:
-    print(f"傳送至試算表失敗: {e}")
+    print(f"❌ 傳送至試算表時發生網路異常: {e}")
 
 print("\n------------ 執行完畢 ------------")
