@@ -2,7 +2,7 @@ name: 每週三自動金流爬蟲排程
 
 on:
   schedule:
-    - cron: '55 2 * * *'
+    - cron: '0 2 * * 3'
   workflow_dispatch:
 
 env:
@@ -33,5 +33,8 @@ jobs:
         pip install selenium webdriver-manager requests gspread oauth2client openpyxl
 
     - name: 5. 執行 Python 爬蟲並同步至雲端試算表
+      env:
+        # 🎯【關鍵修正】：把 GitHub 的 Secret 鑰匙傳遞給 Python 腳本的環境變數
+        GAS_WEBAPP_URL: ${{ secrets.GAS_WEBAPP_URL }}
       run: |
         python LeaderBoard26-5-19.py
